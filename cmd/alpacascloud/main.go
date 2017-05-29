@@ -6,6 +6,8 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"log"
 	"net/http"
+	"os"
+	"time"
 )
 
 var im images.Images
@@ -15,7 +17,13 @@ func Index(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
 }
 
 func Alpaca(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	http.ServeFile(w, r, im.Random())
+	f, err := os.Open(im.Random())
+	if err != nil {
+		http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+	defer f.Close()
+	http.ServeContent(w, r, "", time.Time{}, f)
 }
 
 func main() {
