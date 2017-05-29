@@ -30,7 +30,7 @@ func Alpaca(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 func main() {
 	var err error
-	im, err = images.LoadImages("/tmp/alpacas")
+	im, err = images.LoadImages(os.Getenv("IMAGES_PATH"))
 	if err != nil {
 		log.Fatal(err)
 	}
