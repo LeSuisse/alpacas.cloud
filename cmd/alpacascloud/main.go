@@ -13,7 +13,7 @@ import (
 var im images.Images
 
 func Index(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
-	fmt.Fprintf(w, "Alpacas everywhere\n")
+	fmt.Fprintln(w, "Alpacas are everywhere\nThe alpaca you are looking for is at GET /alpaca")
 }
 
 func Alpaca(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
