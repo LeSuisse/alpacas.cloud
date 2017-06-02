@@ -39,5 +39,18 @@ func main() {
 	router.GET("/", Index)
 	router.GET("/alpaca", Alpaca)
 
-	log.Fatal(http.ListenAndServe("127.0.0.1:8080", router))
+	log.Fatal(http.ListenAndServe("127.0.0.1:8080", &Server{router}))
+}
+
+type Server struct {
+	router *httprouter.Router
+}
+
+func (s *Server) ServeHTTP (w http.ResponseWriter, req *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
+	w.Header().Set("X-Frame-Options", "DENY")
+	w.Header().Set("Referrer-Policy", "no-referrer")
+	w.Header().Set("Content-Security-Policy", "default-src 'none'; frame-ancestors 'none';")
+	s.router.ServeHTTP(w, req)
 }
