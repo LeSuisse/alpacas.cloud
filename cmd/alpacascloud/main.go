@@ -1,12 +1,16 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/LeSuisse/alpacas.cloud/pkg/images"
 	"github.com/julienschmidt/httprouter"
+	"image"
+	"image/png"
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -19,13 +23,41 @@ func Index(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
 func Alpaca(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
-	f, err := os.Open(im.Get())
+	var (
+		alpacaImg image.Image
+		imageErr  error
+	)
+
+	widthQuery := r.URL.Query().Get("width")
+	if widthQuery != "" {
+		width, err := strconv.Atoi(widthQuery)
+		if err != nil {
+			http.Error(w, "400 Bad Request - Invalid width parameter", http.StatusBadRequest)
+			return
+		}
+		alpacaImg, imageErr = im.GetWithWidth(width)
+
+	}
+
+	if alpacaImg == nil && imageErr == nil {
+		alpacaImg, imageErr = im.Get()
+	}
+
+	if imageErr != nil {
+		http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	var bufferJpeg bytes.Buffer
+	err := png.Encode(&bufferJpeg, alpacaImg)
 	if err != nil {
 		http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
 		return
 	}
-	defer f.Close()
-	http.ServeContent(w, r, "", time.Time{}, f)
+
+	readerImg := bytes.NewReader(bufferJpeg.Bytes())
+
+	http.ServeContent(w, r, "", time.Time{}, readerImg)
 }
 
 func main() {
@@ -46,7 +78,7 @@ type Server struct {
 	router *httprouter.Router
 }
 
-func (s *Server) ServeHTTP (w http.ResponseWriter, req *http.Request) {
+func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
 	w.Header().Set("X-Frame-Options", "DENY")

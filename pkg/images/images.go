@@ -2,6 +2,8 @@ package images
 
 import (
 	"errors"
+	"github.com/disintegration/imaging"
+	"image"
 	"io/ioutil"
 	"path"
 	"path/filepath"
@@ -30,6 +32,19 @@ func New(imagesFolderPath string) (Images, error) {
 	return im, nil
 }
 
-func (images Images) Get() string {
-	return images[randomSource.Intn(len(images))]
+func (images Images) Get() (image.Image, error) {
+	return imaging.Open(images[randomSource.Intn(len(images))])
+}
+
+func (images Images) GetWithWidth(width int) (image.Image, error) {
+	for i := 0; i < 10; i++ {
+		im, err := images.Get()
+		if err != nil {
+			return nil, err
+		}
+		if im.Bounds().Max.X >= width {
+			return imaging.Resize(im, width, 0, imaging.Lanczos), nil
+		}
+	}
+	return nil, errors.New("Can't find an image with the right width")
 }
