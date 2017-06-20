@@ -6,7 +6,7 @@ import (
 	"github.com/LeSuisse/alpacas.cloud/pkg/images"
 	"github.com/julienschmidt/httprouter"
 	"image"
-	"image/png"
+	"image/jpeg"
 	"log"
 	"net/http"
 	"os"
@@ -49,7 +49,7 @@ func Alpaca(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	}
 
 	var bufferJpeg bytes.Buffer
-	err := png.Encode(&bufferJpeg, alpacaImg)
+	err := jpeg.Encode(&bufferJpeg, alpacaImg, &jpeg.Options{Quality: 95})
 	if err != nil {
 		http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
 		return
