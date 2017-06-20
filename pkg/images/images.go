@@ -9,7 +9,7 @@ import (
 
 type Images []string
 
-func LoadImages(imagesFolderPath string) (Images, error) {
+func New(imagesFolderPath string) (Images, error) {
 	files, err := ioutil.ReadDir(imagesFolderPath)
 	if err != nil {
 		return nil, err
@@ -30,6 +30,6 @@ func LoadImages(imagesFolderPath string) (Images, error) {
 	return im, nil
 }
 
-func (images Images) Random() string {
+func (images Images) Get() string {
 	return images[randomSource.Intn(len(images))]
 }

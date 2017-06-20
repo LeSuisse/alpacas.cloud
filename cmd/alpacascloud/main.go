@@ -19,7 +19,7 @@ func Index(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
 func Alpaca(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
-	f, err := os.Open(im.Random())
+	f, err := os.Open(im.Get())
 	if err != nil {
 		http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
 		return
@@ -30,7 +30,7 @@ func Alpaca(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 func main() {
 	var err error
-	im, err = images.LoadImages(os.Getenv("IMAGES_PATH"))
+	im, err = images.New(os.Getenv("IMAGES_PATH"))
 	if err != nil {
 		log.Fatal(err)
 	}
