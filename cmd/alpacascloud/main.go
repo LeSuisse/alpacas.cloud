@@ -31,7 +31,7 @@ func Alpaca(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	widthQuery := r.URL.Query().Get("width")
 	if widthQuery != "" {
 		width, err := strconv.Atoi(widthQuery)
-		if err != nil {
+		if err != nil || width < 1 {
 			http.Error(w, "400 Bad Request - Invalid width parameter", http.StatusBadRequest)
 			return
 		}
