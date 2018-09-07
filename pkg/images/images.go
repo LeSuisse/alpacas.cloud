@@ -43,7 +43,7 @@ func (images Images) GetWithWidth(width int) (image.Image, error) {
 			return nil, err
 		}
 		if im.Bounds().Max.X >= width {
-			return imaging.Resize(im, width, 0, imaging.Lanczos), nil
+			return imaging.Resize(im, width, 0, imaging.CatmullRom), nil
 		}
 	}
 	return nil, errors.New("Can't find an image with the right width")
