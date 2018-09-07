@@ -33,7 +33,7 @@ func New(imagesFolderPath string) (Images, error) {
 }
 
 func (images Images) Get() (image.Image, error) {
-	return imaging.Open(images[randomSource.Intn(len(images))])
+	return imaging.Open(images[randomSource.Intn(len(images))], imaging.AutoOrientation(true))
 }
 
 func (images Images) GetWithWidth(width int) (image.Image, error) {
