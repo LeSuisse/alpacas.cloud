@@ -26,7 +26,7 @@ func New(imagesFolderPath string) (Images, error) {
 	}
 
 	if len(im) <= 0 {
-		return nil, errors.New("Can't find images")
+		return nil, errors.New("can't find images")
 	}
 
 	return im, nil
@@ -46,5 +46,5 @@ func (images Images) GetWithWidth(width int) (image.Image, error) {
 			return imaging.Resize(im, width, 0, imaging.CatmullRom), nil
 		}
 	}
-	return nil, errors.New("Can't find an image with the right width")
+	return nil, errors.New("can't find an image with the right width")
 }
