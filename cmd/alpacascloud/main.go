@@ -33,6 +33,15 @@ func Alpaca(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		}
 		opts.MaxWidth = width
 	}
+	heightQuery := r.URL.Query().Get("height")
+	if heightQuery != "" {
+		height, err := strconv.Atoi(heightQuery)
+		if err != nil || height < 1 {
+			http.Error(w, "400 Bad Request - Invalid height parameter", http.StatusBadRequest)
+			return
+		}
+		opts.MaxHeight = height
+	}
 
 	alpacaImg, imageErr := im.Get(opts)
 
