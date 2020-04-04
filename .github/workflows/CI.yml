@@ -17,3 +17,7 @@ jobs:
         run: go build cmd/alpacascloud/main.go
       - name: Staticcheck
         run: go run honnef.co/go/tools/cmd/staticcheck -checks 'all,-ST1000' ./...
+      - name: Build Docker image
+        run: |
+          docker build -t test-build .
+          docker run test-build || test $? -eq 1

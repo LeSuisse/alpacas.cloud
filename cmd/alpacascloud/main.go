@@ -72,7 +72,7 @@ func main() {
 	router.GET("/", Index)
 	router.GET("/alpaca", Alpaca)
 
-	log.Fatal(http.ListenAndServe("127.0.0.1:8080", &Server{router}))
+	log.Fatal(http.ListenAndServe(":8080", &Server{router}))
 }
 
 type Server struct {
