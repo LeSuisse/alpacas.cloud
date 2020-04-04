@@ -2,14 +2,27 @@ package images
 
 import (
 	"errors"
-	"github.com/disintegration/imaging"
-	"image"
+	"github.com/discordapp/lilliput"
 	"io/ioutil"
+	"math"
 	"path"
 	"path/filepath"
 )
 
+const maxAttempts = 10
+
 type Images []string
+type ImageOpts struct {
+	MaxWidth  int
+	MaxHeight int
+}
+
+type RequestedSizeTooBigError struct {
+}
+
+func (e *RequestedSizeTooBigError) Error() string {
+	return "can't find an image with an appropriate size"
+}
 
 func New(imagesFolderPath string) (Images, error) {
 	files, err := ioutil.ReadDir(imagesFolderPath)
@@ -32,19 +45,82 @@ func New(imagesFolderPath string) (Images, error) {
 	return im, nil
 }
 
-func (images Images) Get() (image.Image, error) {
-	return imaging.Open(images[randomSource.Intn(len(images))], imaging.AutoOrientation(true))
-}
-
-func (images Images) GetWithWidth(width int) (image.Image, error) {
-	for i := 0; i < 10; i++ {
-		im, err := images.Get()
-		if err != nil {
+func (images Images) Get(requestedOpts ImageOpts) ([]byte, error) {
+	var errRequestedSizeTooBig *RequestedSizeTooBigError
+	for i := 0; i < maxAttempts; i++ {
+		img, err := images.getResizedImage(requestedOpts)
+		if err == nil {
+			return img, nil
+		}
+		if !errors.As(err, &errRequestedSizeTooBig) {
 			return nil, err
 		}
-		if im.Bounds().Max.X >= width {
-			return imaging.Resize(im, width, 0, imaging.CatmullRom), nil
-		}
 	}
-	return nil, errors.New("can't find an image with the right width")
+
+	return nil, errRequestedSizeTooBig
+}
+
+func (images Images) getResizedImage(requestedOpts ImageOpts) ([]byte, error) {
+	inputBuf, err := ioutil.ReadFile(images[randomSource.Intn(len(images))])
+	if err != nil {
+		return nil, err
+	}
+
+	decoder, err := lilliput.NewDecoder(inputBuf)
+	if err != nil {
+		return nil, err
+	}
+	defer decoder.Close()
+
+	header, err := decoder.Header()
+	if err != nil {
+		return nil, err
+	}
+
+	maxWidth := requestedOpts.MaxWidth
+	if maxWidth == 0 {
+		maxWidth = header.Width()
+	}
+	maxHeight := requestedOpts.MaxHeight
+	if maxHeight == 0 {
+		maxHeight = header.Height()
+	}
+
+	scaleWidth := float64(maxWidth) / float64(header.Width())
+	scaleHeight := float64(maxHeight) / float64(header.Height())
+
+	if scaleWidth > 1 || scaleHeight > 1 {
+		return nil, &RequestedSizeTooBigError{}
+	}
+	scale := math.Min(scaleWidth, scaleHeight)
+
+	maxSize := header.Height()
+	if header.Width() > maxSize {
+		maxSize = header.Width()
+	}
+
+	ops := lilliput.NewImageOps(maxSize)
+	defer ops.Close()
+
+	opts := &lilliput.ImageOptions{
+		FileType:             ".jpeg",
+		NormalizeOrientation: true,
+		ResizeMethod:         lilliput.ImageOpsNoResize,
+		EncodeOptions:        map[int]int{lilliput.JpegQuality: 85},
+	}
+
+	if scale != 1 {
+		opts.ResizeMethod = lilliput.ImageOpsFit
+		opts.Width = int(float64(header.Width()) * scale)
+		opts.Height = int(float64(header.Height()) * scale)
+	}
+
+	outputImg := make([]byte, 10*1024*1024)
+
+	outputImg, err = ops.Transform(decoder, opts, outputImg)
+	if err != nil {
+		return nil, err
+	}
+
+	return outputImg, nil
 }

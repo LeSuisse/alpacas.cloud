@@ -2,11 +2,10 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"github.com/LeSuisse/alpacas.cloud/pkg/images"
-	"github.com/disintegration/imaging"
 	"github.com/julienschmidt/httprouter"
-	"image"
 	"log"
 	"net/http"
 	"os"
@@ -17,16 +16,13 @@ import (
 var im images.Images
 
 func Index(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
-	fmt.Fprintln(w, "Alpacas are everywhere\nThe alpaca you are looking for is at GET /alpaca")
+	_, _ = fmt.Fprintln(w, "Alpacas are everywhere\nThe alpaca you are looking for is at GET /alpaca")
 }
 
 func Alpaca(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
-	var (
-		alpacaImg image.Image
-		imageErr  error
-	)
+	var opts images.ImageOpts
 
 	widthQuery := r.URL.Query().Get("width")
 	if widthQuery != "" {
@@ -35,27 +31,23 @@ func Alpaca(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 			http.Error(w, "400 Bad Request - Invalid width parameter", http.StatusBadRequest)
 			return
 		}
-		alpacaImg, imageErr = im.GetWithWidth(width)
-
+		opts.MaxWidth = width
 	}
 
-	if alpacaImg == nil && imageErr == nil {
-		alpacaImg, imageErr = im.Get()
-	}
+	alpacaImg, imageErr := im.Get(opts)
 
 	if imageErr != nil {
+		log.Println(imageErr)
+		var e *images.RequestedSizeTooBigError
+		if errors.As(imageErr, &e) {
+			http.Error(w, "Cannot find an alpaca with the requested size", http.StatusNotFound)
+			return
+		}
 		http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
-	var bufferJpeg bytes.Buffer
-	err := imaging.Encode(&bufferJpeg, alpacaImg, imaging.JPEG)
-	if err != nil {
-		http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
-		return
-	}
-
-	readerImg := bytes.NewReader(bufferJpeg.Bytes())
+	readerImg := bytes.NewReader(alpacaImg)
 
 	http.ServeContent(w, r, "", time.Time{}, readerImg)
 }
