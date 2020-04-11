@@ -19,6 +19,11 @@ func Index(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
 	_, _ = fmt.Fprintln(w, "Alpacas are everywhere\nThe alpaca you are looking for is at GET /alpaca")
 }
 
+func OpenAPISpec(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	w.Header().Set("Content-Type", "application/json;charset=utf-8")
+	http.ServeFile(w, r, "./web/openapi.json")
+}
+
 func Alpaca(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
@@ -70,6 +75,7 @@ func main() {
 
 	router := httprouter.New()
 	router.GET("/", Index)
+	router.GET("/openapi.json", OpenAPISpec)
 	router.GET("/alpaca", Alpaca)
 
 	log.Fatal(http.ListenAndServe(":8080", &Server{router}))

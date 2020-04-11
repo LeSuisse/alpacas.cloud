@@ -1,0 +1,58 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Alpacas.cloud",
+    "license": {
+      "name": "MIT"
+    }
+  },
+  "paths": {
+    "/alpaca": {
+      "get": {
+        "summary": "Get a random alpaca",
+        "operationId": "getAlpaca",
+        "tags": [
+          "alpaca"
+        ],
+        "parameters": [
+          {
+            "name": "width",
+            "in": "query",
+            "description": "Max width of the image",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "height",
+            "in": "query",
+            "description": "Max height of the image",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "image/jpeg": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

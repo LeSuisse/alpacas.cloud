@@ -15,6 +15,7 @@ COPY --from=builder /usr/lib/x86_64-linux-gnu/libpng16.so.16 /usr/lib/x86_64-lin
 COPY --from=builder /usr/lib/x86_64-linux-gnu/libpng16.so.16.36.0 /usr/lib/x86_64-linux-gnu/
 COPY --from=builder /lib/x86_64-linux-gnu/libz.so.1 /lib/x86_64-linux-gnu/
 COPY --from=builder /lib/x86_64-linux-gnu/libz.so.1.2.11 /lib/x86_64-linux-gnu/
+COPY web/openapi.json /web/
 
 USER nobody
 EXPOSE 8080
