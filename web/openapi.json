@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "version": "1.0.0",
-    "title": "Alpacas.cloud",
+    "title": "Alpacas.cloud — Alpacas are awesome!",
     "license": {
       "name": "MIT"
     }
@@ -50,6 +50,9 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Could not find an alpaca matching your requirements"
           }
         }
       }

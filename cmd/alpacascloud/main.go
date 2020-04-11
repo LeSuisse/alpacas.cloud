@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"errors"
-	"fmt"
 	"github.com/LeSuisse/alpacas.cloud/pkg/images"
 	"github.com/julienschmidt/httprouter"
 	"log"
@@ -15,13 +14,15 @@ import (
 
 var im images.Images
 
-func Index(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
-	_, _ = fmt.Fprintln(w, "Alpacas are everywhere\nThe alpaca you are looking for is at GET /alpaca")
+func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.Header().Set("Content-Security-Policy", "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; frame-ancestors 'none'; form-action 'none'; base-uri 'none';")
+	http.ServeFile(w, r, "./web/dist/index.html")
 }
 
 func OpenAPISpec(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json;charset=utf-8")
-	http.ServeFile(w, r, "./web/openapi.json")
+	http.ServeFile(w, r, "./web/dist/openapi.json")
 }
 
 func Alpaca(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -77,6 +78,7 @@ func main() {
 	router.GET("/", Index)
 	router.GET("/openapi.json", OpenAPISpec)
 	router.GET("/alpaca", Alpaca)
+	router.ServeFiles("/assets/*filepath", http.Dir("./web/dist/"))
 
 	log.Fatal(http.ListenAndServe(":8080", &Server{router}))
 }
@@ -90,6 +92,6 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("X-Content-Type-Options", "nosniff")
 	w.Header().Set("X-Frame-Options", "DENY")
 	w.Header().Set("Referrer-Policy", "no-referrer")
-	w.Header().Set("Content-Security-Policy", "default-src 'none'; frame-ancestors 'none';")
+	w.Header().Set("Content-Security-Policy", "default-src 'none'; frame-ancestors 'none'; form-action 'none'; base-uri 'none';")
 	s.router.ServeHTTP(w, req)
 }
