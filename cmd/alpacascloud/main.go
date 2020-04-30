@@ -4,67 +4,59 @@ import (
 	"bytes"
 	"errors"
 	"github.com/LeSuisse/alpacas.cloud/pkg/images"
-	"github.com/julienschmidt/httprouter"
+	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"os"
-	"strconv"
-	"time"
 )
 
 var im images.Images
 
-func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.Header().Set("Content-Security-Policy", "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; frame-ancestors 'none'; form-action 'none'; base-uri 'none';")
-	http.ServeFile(w, r, "./web/dist/index.html")
+func Index(c *gin.Context) {
+	c.Header("Content-Type", "text/html; charset=utf-8")
+	c.Header("Content-Security-Policy", "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; frame-ancestors 'none'; form-action 'none'; base-uri 'none';")
+
+	http.ServeFile(c.Writer, c.Request, "./web/dist/index.html")
 }
 
-func OpenAPISpec(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	w.Header().Set("Content-Type", "application/json;charset=utf-8")
-	http.ServeFile(w, r, "./web/dist/openapi.json")
+func OpenAPISpec(c *gin.Context) {
+	c.Header("Content-Type", "application/json;charset=utf-8")
+	http.ServeFile(c.Writer, c.Request, "./web/dist/openapi.json")
 }
 
-func Alpaca(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+type GetAlpacaParameters struct {
+	Width int `form:"width" binding:"min=0"`
+	Height int `form:"height" binding:"min=0"`
+}
 
-	var opts images.ImageOpts
+func Alpaca(c *gin.Context) {
+	c.Header("Access-Control-Allow-Origin", "*")
 
-	widthQuery := r.URL.Query().Get("width")
-	if widthQuery != "" {
-		width, err := strconv.Atoi(widthQuery)
-		if err != nil || width < 1 {
-			http.Error(w, "400 Bad Request - Invalid width parameter", http.StatusBadRequest)
-			return
-		}
-		opts.MaxWidth = width
-	}
-	heightQuery := r.URL.Query().Get("height")
-	if heightQuery != "" {
-		height, err := strconv.Atoi(heightQuery)
-		if err != nil || height < 1 {
-			http.Error(w, "400 Bad Request - Invalid height parameter", http.StatusBadRequest)
-			return
-		}
-		opts.MaxHeight = height
+	var requestParameters GetAlpacaParameters
+	if err := c.BindQuery(&requestParameters); err != nil {
+		c.String(http.StatusBadRequest, "Parameters are not valid")
+		return
 	}
 
-	alpacaImg, imageErr := im.Get(opts)
+	alpacaImg, imageErr := im.Get(images.ImageOpts{
+		MaxWidth:  requestParameters.Width,
+		MaxHeight: requestParameters.Height,
+	})
 
 	if imageErr != nil {
 		log.Println(imageErr)
 		var e *images.RequestedSizeTooBigError
 		if errors.As(imageErr, &e) {
-			http.Error(w, "Cannot find an alpaca with the requested size", http.StatusNotFound)
+			c.String(http.StatusNotFound, "Cannot find an alpaca with the requested size")
 			return
 		}
-		http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
+		c.String(http.StatusInternalServerError, "500 Internal Server Error")
 		return
 	}
 
 	readerImg := bytes.NewReader(alpacaImg)
 
-	http.ServeContent(w, r, "", time.Time{}, readerImg)
+	c.DataFromReader(http.StatusOK, readerImg.Size(), "image/jpeg", readerImg, nil)
 }
 
 func main() {
@@ -74,24 +66,25 @@ func main() {
 		log.Fatal(err)
 	}
 
-	router := httprouter.New()
+	gin.SetMode(gin.ReleaseMode)
+
+	router := gin.Default()
+	router.Use(SecurityHeaders())
 	router.GET("/", Index)
+	router.HEAD("/openapi.json", OpenAPISpec)
 	router.GET("/openapi.json", OpenAPISpec)
 	router.GET("/alpaca", Alpaca)
-	router.ServeFiles("/assets/*filepath", http.Dir("./web/dist/"))
+	router.Static("/assets", "./web/dist/")
 
-	log.Fatal(http.ListenAndServe(":8080", &Server{router}))
+	log.Fatal(router.Run(":8080"))
 }
 
-type Server struct {
-	router *httprouter.Router
-}
-
-func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	w.Header().Set("X-XSS-Protection", "1; mode=block")
-	w.Header().Set("X-Content-Type-Options", "nosniff")
-	w.Header().Set("X-Frame-Options", "DENY")
-	w.Header().Set("Referrer-Policy", "no-referrer")
-	w.Header().Set("Content-Security-Policy", "default-src 'none'; frame-ancestors 'none'; form-action 'none'; base-uri 'none';")
-	s.router.ServeHTTP(w, req)
+func SecurityHeaders() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Header("X-XSS-Protection", "1; mode=block")
+		c.Header("X-Content-Type-Options", "nosniff")
+		c.Header("X-Frame-Options", "DENY")
+		c.Header("Referrer-Policy", "no-referrer")
+		c.Header("Content-Security-Policy", "default-src 'none'; frame-ancestors 'none'; form-action 'none'; base-uri 'none';")
+	}
 }
