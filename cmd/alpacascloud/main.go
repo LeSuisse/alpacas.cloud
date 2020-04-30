@@ -88,6 +88,8 @@ func SecurityHeaders() gin.HandlerFunc {
 		c.Header("Content-Security-Policy", "default-src 'none'; frame-ancestors 'none'; form-action 'none'; base-uri 'none';")
 		c.Header("Access-Control-Allow-Origin", "*")
 		c.Header("Cross-Origin-Resource-Policy", "cross-origin")
+		c.Header("Cross-Origin-Embedder-Policy", "require-corp")
+		c.Header("Cross-Origin-Opener-Policy", "same-origin")
 	}
 }
 
