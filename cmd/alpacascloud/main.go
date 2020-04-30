@@ -13,6 +13,7 @@ import (
 var im images.Images
 
 func Index(c *gin.Context) {
+	c.Header("Access-Control-Allow-Origin", "")
 	c.Header("Content-Type", "text/html; charset=utf-8")
 	c.Header("Content-Security-Policy", "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; frame-ancestors 'none'; form-action 'none'; base-uri 'none';")
 
@@ -30,8 +31,6 @@ type GetAlpacaParameters struct {
 }
 
 func Alpaca(c *gin.Context) {
-	c.Header("Access-Control-Allow-Origin", "*")
-
 	var requestParameters GetAlpacaParameters
 	if err := c.BindQuery(&requestParameters); err != nil {
 		c.String(http.StatusBadRequest, "Parameters are not valid")
@@ -86,5 +85,6 @@ func SecurityHeaders() gin.HandlerFunc {
 		c.Header("X-Frame-Options", "DENY")
 		c.Header("Referrer-Policy", "no-referrer")
 		c.Header("Content-Security-Policy", "default-src 'none'; frame-ancestors 'none'; form-action 'none'; base-uri 'none';")
+		c.Header("Access-Control-Allow-Origin", "*")
 	}
 }
