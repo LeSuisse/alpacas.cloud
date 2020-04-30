@@ -13,7 +13,6 @@ import (
 var im images.Images
 
 func Index(c *gin.Context) {
-	c.Header("Access-Control-Allow-Origin", "")
 	c.Header("Content-Type", "text/html; charset=utf-8")
 	c.Header("Content-Security-Policy", "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; frame-ancestors 'none'; form-action 'none'; base-uri 'none';")
 
@@ -69,11 +68,13 @@ func main() {
 
 	router := gin.Default()
 	router.Use(SecurityHeaders())
-	router.GET("/", Index)
+	internalAssets := router.Group("/")
+	internalAssets.Use(InternalAssetsHeaders())
+	internalAssets.GET("/", Index)
+	internalAssets.Static("/assets", "./web/dist/")
 	router.HEAD("/openapi.json", OpenAPISpec)
 	router.GET("/openapi.json", OpenAPISpec)
 	router.GET("/alpaca", Alpaca)
-	router.Static("/assets", "./web/dist/")
 
 	log.Fatal(router.Run(":8080"))
 }
@@ -86,5 +87,13 @@ func SecurityHeaders() gin.HandlerFunc {
 		c.Header("Referrer-Policy", "no-referrer")
 		c.Header("Content-Security-Policy", "default-src 'none'; frame-ancestors 'none'; form-action 'none'; base-uri 'none';")
 		c.Header("Access-Control-Allow-Origin", "*")
+		c.Header("Cross-Origin-Resource-Policy", "cross-origin")
+	}
+}
+
+func InternalAssetsHeaders() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Header("Access-Control-Allow-Origin", "")
+		c.Header("Cross-Origin-Resource-Policy", "same-origin")
 	}
 }
