@@ -8,7 +8,7 @@ COPY . .
 RUN go get -d -v ./...
 RUN go install -v ./...
 
-FROM node:14.0.0-buster-slim AS builder-web
+FROM node:14.1.0-buster-slim AS builder-web
 
 COPY web/ /web/
 WORKDIR /web/
