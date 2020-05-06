@@ -120,6 +120,7 @@ func main() {
 
 	router := gin.Default()
 	router.Use(SecurityHeaders())
+	router.Use(ginprom.PromMiddleware(nil))
 	internalAssets := router.Group("/")
 	internalAssets.Use(InternalAssetsHeaders())
 	internalAssets.GET("/", Index)
