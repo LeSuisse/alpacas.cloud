@@ -124,3 +124,75 @@ func (images Images) getResizedImage(requestedOpts ImageOpts) ([]byte, error) {
 
 	return outputImg, nil
 }
+
+func (images Images) GetPlaceHolder(requestedOpts ImageOpts) ([]byte, error) {
+	var errRequestedSizeTooBig *RequestedSizeTooBigError
+	for i := 0; i < maxAttempts; i++ {
+		img, err := images.getPlaceHolderImage(requestedOpts)
+		if err == nil {
+			return img, nil
+		}
+		if !errors.As(err, &errRequestedSizeTooBig) {
+			return nil, err
+		}
+	}
+
+	return nil, errRequestedSizeTooBig
+}
+
+func (images Images) getPlaceHolderImage(requestedOpts ImageOpts) ([]byte, error) {
+	inputBuf, err := ioutil.ReadFile(images[randomSource.Intn(len(images))])
+	if err != nil {
+		return nil, err
+	}
+
+	decoder, err := lilliput.NewDecoder(inputBuf)
+	if err != nil {
+		return nil, err
+	}
+	defer decoder.Close()
+
+	header, err := decoder.Header()
+	if err != nil {
+		return nil, err
+	}
+
+	width := requestedOpts.MaxWidth
+	if width == 0 {
+		width = header.Width()
+	}
+	height := requestedOpts.MaxHeight
+	if height == 0 {
+		height = header.Height()
+	}
+
+	if width > header.Width() || height > header.Height() {
+		return nil, &RequestedSizeTooBigError{}
+	}
+
+	maxSize := header.Height()
+	if header.Width() > maxSize {
+		maxSize = header.Width()
+	}
+
+	ops := lilliput.NewImageOps(maxSize)
+	defer ops.Close()
+
+	opts := &lilliput.ImageOptions{
+		FileType:             ".jpeg",
+		NormalizeOrientation: true,
+		ResizeMethod:         lilliput.ImageOpsFit,
+		EncodeOptions:        map[int]int{lilliput.JpegQuality: 85},
+		Width:                width,
+		Height:               height,
+	}
+
+	outputImg := make([]byte, 10*1024*1024)
+
+	outputImg, err = ops.Transform(decoder, opts, outputImg)
+	if err != nil {
+		return nil, err
+	}
+
+	return outputImg, nil
+}

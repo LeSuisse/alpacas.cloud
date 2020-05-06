@@ -8,6 +8,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"regexp"
+	"strconv"
 )
 
 var im images.Images
@@ -25,7 +27,7 @@ func OpenAPISpec(c *gin.Context) {
 }
 
 type GetAlpacaParameters struct {
-	Width int `form:"width" binding:"min=0"`
+	Width  int `form:"width" binding:"min=0"`
 	Height int `form:"height" binding:"min=0"`
 }
 
@@ -39,6 +41,53 @@ func Alpaca(c *gin.Context) {
 	alpacaImg, imageErr := im.Get(images.ImageOpts{
 		MaxWidth:  requestParameters.Width,
 		MaxHeight: requestParameters.Height,
+	})
+
+	if imageErr != nil {
+		log.Println(imageErr)
+		var e *images.RequestedSizeTooBigError
+		if errors.As(imageErr, &e) {
+			c.String(http.StatusNotFound, "Cannot find an alpaca with the requested size")
+			return
+		}
+		c.String(http.StatusInternalServerError, "500 Internal Server Error")
+		return
+	}
+
+	readerImg := bytes.NewReader(alpacaImg)
+
+	c.DataFromReader(http.StatusOK, readerImg.Size(), "image/jpeg", readerImg, nil)
+}
+
+type GetAlpacaPlaceHolderParameters struct {
+	PlaceholderSize string `uri:"placeholder_size" binding:"required,min=3"`
+}
+
+func AlpacaPlaceholder(c *gin.Context) {
+	var requestParameters GetAlpacaPlaceHolderParameters
+	if err := c.BindUri(&requestParameters); err != nil {
+		c.String(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	rePlaceholderQueryString := regexp.MustCompile(`^([1-9]\d*)x([1-9]\d*)$`)
+	params := rePlaceholderQueryString.FindStringSubmatch(requestParameters.PlaceholderSize)
+	if len(params) != 3 {
+		c.String(http.StatusBadRequest, "Parameters are not valid")
+		return
+	}
+
+	width, errW := strconv.Atoi(params[1])
+	height, errH := strconv.Atoi(params[2])
+
+	if errW != nil || errH != nil {
+		c.String(http.StatusBadRequest, "Parameters are not valid")
+		return
+	}
+
+	alpacaImg, imageErr := im.GetPlaceHolder(images.ImageOpts{
+		MaxWidth:  width,
+		MaxHeight: height,
 	})
 
 	if imageErr != nil {
@@ -75,6 +124,7 @@ func main() {
 	router.HEAD("/openapi.json", OpenAPISpec)
 	router.GET("/openapi.json", OpenAPISpec)
 	router.GET("/alpaca", Alpaca)
+	router.GET("/placeholder/:placeholder_size", AlpacaPlaceholder)
 
 	log.Fatal(router.Run(":8080"))
 }

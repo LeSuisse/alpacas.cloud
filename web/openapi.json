@@ -56,6 +56,55 @@
           }
         }
       }
+    },
+    "/placeholder/{width}x{height}": {
+      "get": {
+        "summary": "Get a random alpaca placeholder",
+        "operationId": "getPlaceholder",
+        "tags": [
+          "alpaca"
+        ],
+        "parameters": [
+          {
+            "name": "width",
+            "in": "path",
+            "description": "Width of the image",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "height",
+            "in": "path",
+            "description": "Height of the image",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "image/jpeg": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Could not find an alpaca matching your requirements"
+          }
+        }
+      }
     }
   }
 }
