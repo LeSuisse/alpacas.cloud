@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"errors"
 	"github.com/LeSuisse/alpacas.cloud/pkg/images"
+	"github.com/chenjiandongx/ginprom"
 	"github.com/gin-gonic/gin"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"log"
 	"net/http"
 	"os"
@@ -112,6 +114,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	metricsPassword := os.Getenv("METRICS_PASSWORD")
 
 	gin.SetMode(gin.ReleaseMode)
 
@@ -125,6 +128,12 @@ func main() {
 	router.GET("/openapi.json", OpenAPISpec)
 	router.GET("/alpaca", Alpaca)
 	router.GET("/placeholder/:placeholder_size", AlpacaPlaceholder)
+	if metricsPassword != "" {
+		metrics := router.Group("/metrics")
+		metrics.Use(gin.BasicAuth(gin.Accounts{"metrics": metricsPassword}))
+		metrics.Use(InternalAssetsHeaders())
+		metrics.GET("", ginprom.PromHandler(promhttp.Handler()))
+	}
 
 	log.Fatal(router.Run(":8080"))
 }
