@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"github.com/LeSuisse/alpacas.cloud/pkg/images"
-	"github.com/chenjiandongx/ginprom"
+	"github.com/LeSuisse/alpacas.cloud/pkg/prometheus"
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"log"
@@ -120,7 +120,7 @@ func main() {
 
 	router := gin.Default()
 	router.Use(SecurityHeaders())
-	router.Use(ginprom.PromMiddleware(nil))
+	router.Use(prometheus.PromMiddleware(nil))
 	internalAssets := router.Group("/")
 	internalAssets.Use(InternalAssetsHeaders())
 	internalAssets.GET("/", Index)
@@ -133,7 +133,7 @@ func main() {
 		metrics := router.Group("/metrics")
 		metrics.Use(gin.BasicAuth(gin.Accounts{"metrics": metricsPassword}))
 		metrics.Use(InternalAssetsHeaders())
-		metrics.GET("", ginprom.PromHandler(promhttp.Handler()))
+		metrics.GET("", prometheus.PromHandler(promhttp.Handler()))
 	}
 
 	log.Fatal(router.Run(":8080"))
