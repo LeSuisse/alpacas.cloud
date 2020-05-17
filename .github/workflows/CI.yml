@@ -21,3 +21,7 @@ jobs:
         run: |
           docker build -t test-build-image-api-server -f image-api-server.dockerfile .
           docker run test-build-image-api-server || test $? -eq 1
+      - name: Build Docker image Signal server
+        run: |
+          docker build -t test-build-signal-server -f signal-server.dockerfile .
+          docker run test-build-signal-server || test $? -eq 1
