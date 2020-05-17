@@ -1,4 +1,4 @@
-name: Build and publish Docker image
+name: Build and publish Docker images
 
 on:
   push:
@@ -16,5 +16,5 @@ jobs:
           username: $GITHUB_ACTOR
           password: ${{ secrets.GITHUB_TOKEN }}
       - run: |
-          docker build -t docker.pkg.github.com/lesuisse/alpacas.cloud/server .
+          docker build -t docker.pkg.github.com/lesuisse/alpacas.cloud/server -f image-api-server.dockerfile .
           docker push docker.pkg.github.com/lesuisse/alpacas.cloud/server
