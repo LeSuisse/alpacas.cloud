@@ -22,6 +22,11 @@ func MessageHandler(incomingMessage *textsecure.Message) {
 	}
 	defer response.Body.Close()
 
+	if response.StatusCode != 200 {
+		log.Printf("API responded with an HTTP status code %d", response.StatusCode)
+		return
+	}
+
 	sendImageResponse(incomingMessage, response.Body)
 }
 
