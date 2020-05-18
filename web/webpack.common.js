@@ -29,8 +29,10 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: "index.html"
         }),
-        new CopyPlugin([
-            {from: "openapi.json", to: "openapi.json"}
-        ]),
+        new CopyPlugin({
+            patterns: [
+                {from: "openapi.json", to: "openapi.json"}
+            ]
+        }),
     ]
 };
