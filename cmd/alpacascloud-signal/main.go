@@ -2,9 +2,11 @@ package main
 
 import (
 	"log"
+	"net/http"
 	"os"
 
 	"github.com/LeSuisse/alpacas.cloud/pkg/signal"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/signal-golang/textsecure"
 )
 
@@ -46,8 +48,24 @@ func main() {
 		log.Fatal(err)
 	}
 
-	err = textsecure.StartListening()
-	if err != nil {
-		log.Fatal(err)
-	}
+	stop := make(chan bool)
+
+	http.Handle("/metrics", promhttp.Handler())
+
+	go func() {
+		err = http.ListenAndServe(":8080", nil)
+		if err != nil {
+			log.Fatal(err)
+		}
+		stop <- true
+	}()
+	go func() {
+		err = textsecure.StartListening()
+		if err != nil {
+			log.Fatal(err)
+		}
+		stop<-true
+	}()
+
+	<-stop
 }
