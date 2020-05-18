@@ -9,7 +9,10 @@ import (
 	"path/filepath"
 )
 
-const maxAttempts = 10
+const (
+	maxAttempts        = 10
+	maxOutputImageSize = 5 * 1024 * 1024
+)
 
 type Images []string
 type ImageOpts struct {
@@ -115,7 +118,7 @@ func (images Images) getResizedImage(requestedOpts ImageOpts) ([]byte, error) {
 		opts.Height = int(float64(header.Height()) * scale)
 	}
 
-	outputImg := make([]byte, 10*1024*1024)
+	outputImg := make([]byte, maxOutputImageSize)
 
 	outputImg, err = ops.Transform(decoder, opts, outputImg)
 	if err != nil {
@@ -187,7 +190,7 @@ func (images Images) getPlaceHolderImage(requestedOpts ImageOpts) ([]byte, error
 		Height:               height,
 	}
 
-	outputImg := make([]byte, 10*1024*1024)
+	outputImg := make([]byte, maxOutputImageSize)
 
 	outputImg, err = ops.Transform(decoder, opts, outputImg)
 	if err != nil {
