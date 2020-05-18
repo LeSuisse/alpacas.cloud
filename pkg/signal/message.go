@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 )
 
 const FetchImageURL = "https://alpacas.cloud/alpaca?width=800"
@@ -41,7 +42,10 @@ func MessageHandler(incomingMessage *textsecure.Message) {
 		return
 	}
 
-	response, err := http.Get(FetchImageURL)
+	httpClient := &http.Client{
+		Timeout: 5 * time.Second,
+	}
+	response, err := httpClient.Get(FetchImageURL)
 	if err != nil {
 		responseMessages.WithLabelValues("api_call_failure").Inc()
 		log.Print(err)
