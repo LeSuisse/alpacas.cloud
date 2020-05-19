@@ -5,7 +5,13 @@ RUN apt-get update -y && apt-get install -y libpng-dev
 WORKDIR /go/src/app
 COPY . .
 
-RUN go build -v -o image-api-server cmd/alpacascloud/main.go
+RUN go build -v \
+    -trimpath \
+    -buildmode=pie \
+    -mod=readonly \
+    -modcacherw \
+    -ldflags "-extldflags -Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now" \
+    -o image-api-server cmd/alpacascloud/main.go
 
 FROM node:14.2.0-buster-slim AS builder-web
 
