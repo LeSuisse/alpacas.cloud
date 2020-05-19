@@ -8,7 +8,7 @@ RUN go build -v \
     -buildmode=pie \
     -mod=readonly \
     -modcacherw \
-    -ldflags "-extldflags -Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now" \
+    -ldflags "-s -w -extldflags -Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now" \
     -o signal-server cmd/alpacascloud-signal/main.go
 
 FROM gcr.io/distroless/base
