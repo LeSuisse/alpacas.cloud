@@ -8,7 +8,7 @@
     "watch": "webpack --config webpack.dev.js --watch"
   },
   "dependencies": {
-    "swagger-ui": "^3.26.0"
+    "swagger-ui": "^3.26.1"
   },
   "devDependencies": {
     "clean-webpack-plugin": "^3.0.0",
