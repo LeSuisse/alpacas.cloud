@@ -35,7 +35,6 @@ jobs:
         uses: anchore/scan-action@v1.0.7
         with:
           image-reference: "test-build-image-api-server"
-          dockerfile-path: "image-api-server.dockerfile"
           fail-build: true
           include-app-packages: true
           acs-report-enable: true
@@ -59,7 +58,6 @@ jobs:
         uses: anchore/scan-action@v1.0.7
         with:
           image-reference: "test-build-signal-server"
-          dockerfile-path: "signal-server.dockerfile"
           fail-build: true
           include-app-packages: true
           acs-report-enable: true
