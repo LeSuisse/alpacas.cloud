@@ -7,7 +7,8 @@ on:
   pull_request:
 
 jobs:
-  build:
+  go_pipeline:
+    name: Go build and static analysis
     runs-on: ubuntu-latest
     steps:
       - uses: actions/setup-go@v2.1.1
@@ -21,11 +22,50 @@ jobs:
         run: go build cmd/alpacascloud/main.go
       - name: Staticcheck
         run: go run honnef.co/go/tools/cmd/staticcheck -checks 'all,-ST1000' ./...
-      - name: Build Docker image Image API server
+  docker-image-image-api-server:
+    name: Build & scan Docker image Image API server
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.3.1
+      - name: Build Docker image
         run: |
           docker build -t test-build-image-api-server -f image-api-server.dockerfile .
           docker run test-build-image-api-server || test $? -eq 1
+      - name: Anchore scan
+        uses: anchore/scan-action@v1.0.7
+        with:
+          image-reference: "test-build-image-api-server"
+          dockerfile-path: "image-api-server.dockerfile"
+          fail-build: true
+          include-app-packages: true
+          acs-report-enable: true
+      - name: Anchore inline scan JSON results
+        run: for j in `ls ./anchore-reports/*.json`; do echo "---- ${j} ----"; cat ${j}; echo; done
+      - name: Upload Anchore scan SARIF report
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: results.sarif
+
+  docker-image-signal-server:
+    name: Build & scan Docker image Signal server
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.3.1
       - name: Build Docker image Signal server
         run: |
           docker build -t test-build-signal-server -f signal-server.dockerfile .
           docker run test-build-signal-server || test $? -eq 1
+      - name: Anchore scan
+        uses: anchore/scan-action@v1.0.7
+        with:
+          image-reference: "test-build-signal-server"
+          dockerfile-path: "signal-server.dockerfile"
+          fail-build: true
+          include-app-packages: true
+          acs-report-enable: true
+      - name: Anchore inline scan JSON results
+        run: for j in `ls ./anchore-reports/*.json`; do echo "---- ${j} ----"; cat ${j}; echo; done
+      - name: Upload Anchore scan SARIF report
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: results.sarif
