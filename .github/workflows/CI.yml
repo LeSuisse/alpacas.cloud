@@ -32,7 +32,7 @@ jobs:
           docker build -t test-build-image-api-server -f image-api-server.dockerfile .
           docker run test-build-image-api-server || test $? -eq 1
       - name: Anchore scan
-        uses: anchore/scan-action@v1.0.7
+        uses: anchore/scan-action@v1.0.8
         with:
           image-reference: "test-build-image-api-server"
           dockerfile-path: "image-api-server.dockerfile"
@@ -56,7 +56,7 @@ jobs:
           docker build -t test-build-signal-server -f signal-server.dockerfile .
           docker run test-build-signal-server || test $? -eq 1
       - name: Anchore scan
-        uses: anchore/scan-action@v1.0.7
+        uses: anchore/scan-action@v1.0.8
         with:
           image-reference: "test-build-signal-server"
           dockerfile-path: "signal-server.dockerfile"
