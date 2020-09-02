@@ -1,4 +1,4 @@
-FROM golang:1.15.0-buster AS builder-go
+FROM golang:1.15.1-buster AS builder-go
 
 RUN apt-get update -y && apt-get install -y libpng-dev
 
