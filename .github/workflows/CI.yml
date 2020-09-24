@@ -15,7 +15,7 @@ jobs:
         with:
           go-version: 1.14
         id: go
-      - uses: actions/checkout@v2.3.2
+      - uses: actions/checkout@v2.3.3
       - name: Get dependencies
         run: go get -v -t -d ./...
       - name: Build
@@ -26,7 +26,7 @@ jobs:
     name: Build & scan Docker image Image API server
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2.3.2
+      - uses: actions/checkout@v2.3.3
       - name: Build Docker image
         run: |
           docker build -t test-build-image-api-server -f image-api-server.dockerfile .
@@ -50,7 +50,7 @@ jobs:
     name: Build & scan Docker image Signal server
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2.3.2
+      - uses: actions/checkout@v2.3.3
       - name: Build Docker image Signal server
         run: |
           docker build -t test-build-signal-server -f signal-server.dockerfile .
