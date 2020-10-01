@@ -32,12 +32,10 @@ jobs:
           docker build -t test-build-image-api-server -f image-api-server.dockerfile .
           docker run test-build-image-api-server || test $? -eq 1
       - name: Anchore scan
-        uses: anchore/scan-action@v1.0.9
+        uses: anchore/scan-action@v2
         with:
-          image-reference: "test-build-image-api-server"
-          dockerfile-path: "image-api-server.dockerfile"
+          image: "test-build-image-api-server"
           fail-build: true
-          include-app-packages: true
           acs-report-enable: true
       - name: Anchore inline scan JSON results
         run: for j in `ls ./anchore-reports/*.json`; do echo "---- ${j} ----"; cat ${j}; echo; done
@@ -56,12 +54,10 @@ jobs:
           docker build -t test-build-signal-server -f signal-server.dockerfile .
           docker run test-build-signal-server || test $? -eq 1
       - name: Anchore scan
-        uses: anchore/scan-action@v1.0.9
+        uses: anchore/scan-action@v2
         with:
-          image-reference: "test-build-signal-server"
-          dockerfile-path: "signal-server.dockerfile"
+          image: "test-build-signal-server"
           fail-build: true
-          include-app-packages: true
           acs-report-enable: true
       - name: Anchore inline scan JSON results
         run: for j in `ls ./anchore-reports/*.json`; do echo "---- ${j} ----"; cat ${j}; echo; done
