@@ -13,7 +13,7 @@ RUN go build -v \
     -ldflags "-s -w -extldflags -Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now" \
     -o image-api-server cmd/alpacascloud/main.go
 
-FROM node:15.0.0-buster-slim AS builder-web
+FROM node:15.0.1-buster-slim AS builder-web
 
 COPY web/ /web/
 WORKDIR /web/
