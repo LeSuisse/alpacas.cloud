@@ -19,6 +19,10 @@ type ImageOpts struct {
 	MaxWidth  int
 	MaxHeight int
 }
+type OutputImage struct {
+	Name string
+	Data []byte
+}
 
 type RequestedSizeTooBigError struct {
 }
@@ -48,7 +52,7 @@ func New(imagesFolderPath string) (Images, error) {
 	return im, nil
 }
 
-func (images Images) Get(requestedOpts ImageOpts) ([]byte, error) {
+func (images Images) Get(requestedOpts ImageOpts) (*OutputImage, error) {
 	var errRequestedSizeTooBig *RequestedSizeTooBigError
 	for i := 0; i < maxAttempts; i++ {
 		img, err := images.getResizedImage(requestedOpts)
@@ -63,8 +67,9 @@ func (images Images) Get(requestedOpts ImageOpts) ([]byte, error) {
 	return nil, errRequestedSizeTooBig
 }
 
-func (images Images) getResizedImage(requestedOpts ImageOpts) ([]byte, error) {
-	inputBuf, err := ioutil.ReadFile(images[randomSource.Intn(len(images))])
+func (images Images) getResizedImage(requestedOpts ImageOpts) (*OutputImage, error) {
+	imagePath := images[randomSource.Intn(len(images))]
+	inputBuf, err := ioutil.ReadFile(imagePath)
 	if err != nil {
 		return nil, err
 	}
@@ -125,10 +130,13 @@ func (images Images) getResizedImage(requestedOpts ImageOpts) ([]byte, error) {
 		return nil, err
 	}
 
-	return outputImg, nil
+	return &OutputImage{
+		Name: filepath.Base(imagePath),
+		Data: outputImg,
+	}, nil
 }
 
-func (images Images) GetPlaceHolder(requestedOpts ImageOpts) ([]byte, error) {
+func (images Images) GetPlaceHolder(requestedOpts ImageOpts) (*OutputImage, error) {
 	var errRequestedSizeTooBig *RequestedSizeTooBigError
 	for i := 0; i < maxAttempts; i++ {
 		img, err := images.getPlaceHolderImage(requestedOpts)
@@ -143,8 +151,9 @@ func (images Images) GetPlaceHolder(requestedOpts ImageOpts) ([]byte, error) {
 	return nil, errRequestedSizeTooBig
 }
 
-func (images Images) getPlaceHolderImage(requestedOpts ImageOpts) ([]byte, error) {
-	inputBuf, err := ioutil.ReadFile(images[randomSource.Intn(len(images))])
+func (images Images) getPlaceHolderImage(requestedOpts ImageOpts) (*OutputImage, error) {
+	imagePath := images[randomSource.Intn(len(images))]
+	inputBuf, err := ioutil.ReadFile(imagePath)
 	if err != nil {
 		return nil, err
 	}
@@ -197,5 +206,8 @@ func (images Images) getPlaceHolderImage(requestedOpts ImageOpts) ([]byte, error
 		return nil, err
 	}
 
-	return outputImg, nil
+	return &OutputImage{
+		Name: filepath.Base(imagePath),
+		Data: outputImg,
+	}, nil
 }
