@@ -56,8 +56,9 @@ func Alpaca(c *gin.Context) {
 		return
 	}
 
-	readerImg := bytes.NewReader(alpacaImg)
+	readerImg := bytes.NewReader(alpacaImg.Data)
 
+	log.Println(alpacaImg.Name)
 	c.DataFromReader(http.StatusOK, readerImg.Size(), "image/jpeg", readerImg, nil)
 }
 
@@ -103,8 +104,9 @@ func AlpacaPlaceholder(c *gin.Context) {
 		return
 	}
 
-	readerImg := bytes.NewReader(alpacaImg)
+	readerImg := bytes.NewReader(alpacaImg.Data)
 
+	log.Println(alpacaImg.Name)
 	c.DataFromReader(http.StatusOK, readerImg.Size(), "image/jpeg", readerImg, nil)
 }
 
