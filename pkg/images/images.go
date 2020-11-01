@@ -2,7 +2,7 @@ package images
 
 import (
 	"errors"
-	"github.com/discordapp/lilliput"
+	"github.com/h2non/bimg"
 	"io/ioutil"
 	"math"
 	"path"
@@ -10,8 +10,7 @@ import (
 )
 
 const (
-	maxAttempts        = 10
-	maxOutputImageSize = 5 * 1024 * 1024
+	maxAttempts = 10
 )
 
 type Images []string
@@ -74,65 +73,44 @@ func (images Images) getResizedImage(requestedOpts ImageOpts) (*OutputImage, err
 		return nil, err
 	}
 
-	decoder, err := lilliput.NewDecoder(inputBuf)
+	image := bimg.NewImage(inputBuf)
+	_, err = image.AutoRotate()
 	if err != nil {
 		return nil, err
 	}
-	defer decoder.Close()
 
-	header, err := decoder.Header()
+	imageSize, err := image.Size()
 	if err != nil {
 		return nil, err
 	}
 
 	maxWidth := requestedOpts.MaxWidth
 	if maxWidth == 0 {
-		maxWidth = header.Width()
+		maxWidth = imageSize.Width
 	}
 	maxHeight := requestedOpts.MaxHeight
 	if maxHeight == 0 {
-		maxHeight = header.Height()
+		maxHeight = imageSize.Height
 	}
 
-	scaleWidth := float64(maxWidth) / float64(header.Width())
-	scaleHeight := float64(maxHeight) / float64(header.Height())
+	scaleWidth := float64(maxWidth) / float64(imageSize.Width)
+	scaleHeight := float64(maxHeight) / float64(imageSize.Height)
 
 	if scaleWidth > 1 || scaleHeight > 1 {
 		return nil, &RequestedSizeTooBigError{}
 	}
 	scale := math.Min(scaleWidth, scaleHeight)
 
-	maxSize := header.Height()
-	if header.Width() > maxSize {
-		maxSize = header.Width()
-	}
-
-	ops := lilliput.NewImageOps(maxSize)
-	defer ops.Close()
-
-	opts := &lilliput.ImageOptions{
-		FileType:             ".jpeg",
-		NormalizeOrientation: true,
-		ResizeMethod:         lilliput.ImageOpsNoResize,
-		EncodeOptions:        map[int]int{lilliput.JpegQuality: 85},
-	}
-
 	if scale != 1 {
-		opts.ResizeMethod = lilliput.ImageOpsFit
-		opts.Width = int(float64(header.Width()) * scale)
-		opts.Height = int(float64(header.Height()) * scale)
-	}
-
-	outputImg := make([]byte, maxOutputImageSize)
-
-	outputImg, err = ops.Transform(decoder, opts, outputImg)
-	if err != nil {
-		return nil, err
+		_, err = image.Resize(int(float64(imageSize.Width) * scale), int(float64(imageSize.Height) * scale))
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return &OutputImage{
 		Name: filepath.Base(imagePath),
-		Data: outputImg,
+		Data: image.Image(),
 	}, nil
 }
 
@@ -158,50 +136,31 @@ func (images Images) getPlaceHolderImage(requestedOpts ImageOpts) (*OutputImage,
 		return nil, err
 	}
 
-	decoder, err := lilliput.NewDecoder(inputBuf)
+	image := bimg.NewImage(inputBuf)
+	_, err = image.AutoRotate()
 	if err != nil {
 		return nil, err
 	}
-	defer decoder.Close()
 
-	header, err := decoder.Header()
+	imageSize, err := image.Size()
 	if err != nil {
 		return nil, err
 	}
 
 	width := requestedOpts.MaxWidth
 	if width == 0 {
-		width = header.Width()
+		width = imageSize.Width
 	}
 	height := requestedOpts.MaxHeight
 	if height == 0 {
-		height = header.Height()
+		height = imageSize.Height
 	}
 
-	if width > header.Width() || height > header.Height() {
+	if width > imageSize.Width || height > imageSize.Height {
 		return nil, &RequestedSizeTooBigError{}
 	}
 
-	maxSize := header.Height()
-	if header.Width() > maxSize {
-		maxSize = header.Width()
-	}
-
-	ops := lilliput.NewImageOps(maxSize)
-	defer ops.Close()
-
-	opts := &lilliput.ImageOptions{
-		FileType:             ".jpeg",
-		NormalizeOrientation: true,
-		ResizeMethod:         lilliput.ImageOpsFit,
-		EncodeOptions:        map[int]int{lilliput.JpegQuality: 85},
-		Width:                width,
-		Height:               height,
-	}
-
-	outputImg := make([]byte, maxOutputImageSize)
-
-	outputImg, err = ops.Transform(decoder, opts, outputImg)
+	outputImg, err := image.SmartCrop(width, height)
 	if err != nil {
 		return nil, err
 	}

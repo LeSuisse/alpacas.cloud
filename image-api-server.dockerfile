@@ -1,6 +1,6 @@
 FROM golang:1.15.3-buster AS builder-go
 
-RUN apt-get update -y && apt-get install -y libpng-dev
+RUN apt-get update -y && apt-get install --no-install-recommends -y libvips-dev
 
 WORKDIR /go/src/app
 COPY . .
@@ -19,13 +19,11 @@ COPY web/ /web/
 WORKDIR /web/
 RUN npm install && npm run build
 
-FROM gcr.io/distroless/cc-debian10
+FROM ubuntu:focal-20201008
+
+RUN apt-get update -y && apt-get install --no-install-recommends -y libvips && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder-go /go/src/app/image-api-server /
-COPY --from=builder-go /usr/lib/x86_64-linux-gnu/libpng16.so.16 /usr/lib/x86_64-linux-gnu/
-COPY --from=builder-go /usr/lib/x86_64-linux-gnu/libpng16.so.16.36.0 /usr/lib/x86_64-linux-gnu/
-COPY --from=builder-go /lib/x86_64-linux-gnu/libz.so.1 /lib/x86_64-linux-gnu/
-COPY --from=builder-go /lib/x86_64-linux-gnu/libz.so.1.2.11 /lib/x86_64-linux-gnu/
 COPY --from=builder-web /web/dist/ /web/dist/
 
 USER nobody
