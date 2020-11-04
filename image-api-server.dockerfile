@@ -1,6 +1,6 @@
-FROM golang:1.15.3-buster AS builder-go
+FROM golang:1.15.3-alpine3.12 AS builder-go
 
-RUN apt-get update -y && apt-get install --no-install-recommends -y libvips-dev
+RUN apk add --no-cache vips-dev gcc libc-dev pkgconfig
 
 WORKDIR /go/src/app
 COPY . .
@@ -13,15 +13,15 @@ RUN go build -v \
     -ldflags "-s -w -extldflags -Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now" \
     -o image-api-server cmd/alpacascloud/main.go
 
-FROM node:15.0.1-buster-slim AS builder-web
+FROM node:15.0.1-alpine3.12 AS builder-web
 
 COPY web/ /web/
 WORKDIR /web/
 RUN npm install && npm run build
 
-FROM ubuntu:focal-20201008
+FROM alpine:3.12.1
 
-RUN apt-get update -y && apt-get install --no-install-recommends -y libvips && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache vips
 
 COPY --from=builder-go /go/src/app/image-api-server /
 COPY --from=builder-web /web/dist/ /web/dist/
