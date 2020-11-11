@@ -152,6 +152,8 @@ func SecurityHeaders() gin.HandlerFunc {
 		c.Header("Cross-Origin-Resource-Policy", "cross-origin")
 		c.Header("Cross-Origin-Embedder-Policy", "require-corp")
 		c.Header("Cross-Origin-Opener-Policy", "same-origin")
+		c.Header("Feature-Policy", "accelerometer 'none'; ambient-light-sensor 'none'; autoplay 'none'; battery 'none'; camera 'none'; document-domain 'none'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; payment 'none'; usb 'none'; wake-lock 'none'; screen-wake-lock 'none';")
+		c.Header("Permissions-Policy", "accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), document-domain=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), wake-lock=(), screen-wake-lock=()")
 	}
 }
 
