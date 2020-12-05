@@ -3,7 +3,7 @@ FROM golang:1.15.6-alpine3.12 AS builder-go
 WORKDIR /go/src/app
 COPY . .
 
-ENV CGO_ENABLED=0
+RUN apk add --no-cache gcc musl-dev
 RUN go build -v \
     -trimpath \
     -buildmode=pie \
