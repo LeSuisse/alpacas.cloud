@@ -9,7 +9,7 @@ on:
 jobs:
   go_pipeline:
     name: Go build and static analysis
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/setup-go@v2.1.3
         with:
@@ -26,7 +26,7 @@ jobs:
         run: go run honnef.co/go/tools/cmd/staticcheck -checks 'all,-ST1000' ./...
   docker-image-image-api-server:
     name: Build & scan Docker image Image API server
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2.3.4
       - name: Build Docker image
@@ -48,7 +48,7 @@ jobs:
 
   docker-image-signal-server:
     name: Build & scan Docker image Signal server
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2.3.4
       - name: Build Docker image Signal server
