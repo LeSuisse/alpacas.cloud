@@ -19,7 +19,7 @@ COPY web/ /web/
 WORKDIR /web/
 RUN npm install && npm run build
 
-FROM alpine:3.12.2
+FROM alpine:3.12.3
 
 RUN apk add --no-cache vips
 
