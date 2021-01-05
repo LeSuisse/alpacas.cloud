@@ -12,7 +12,7 @@ RUN go build -v \
     -ldflags "-s -w -extldflags -Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now" \
     -o signal-server cmd/alpacascloud-signal/main.go
 
-FROM gcr.io/distroless/base
+FROM alpine:3.12.3
 
 COPY --from=builder-go /go/src/app/signal-server /
 
