@@ -13,7 +13,7 @@ RUN go build -v \
     -ldflags "-s -w -extldflags -Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now" \
     -o image-api-server cmd/alpacascloud/main.go
 
-FROM node:15.5.1-alpine3.12 AS builder-web
+FROM node:15.6.0-alpine3.12 AS builder-web
 
 COPY web/ /web/
 WORKDIR /web/
