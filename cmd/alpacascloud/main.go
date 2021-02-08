@@ -18,7 +18,7 @@ var im images.Images
 
 func Index(c *gin.Context) {
 	c.Header("Content-Type", "text/html; charset=utf-8")
-	c.Header("Content-Security-Policy", "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; connect-src 'self'; frame-ancestors 'none'; form-action 'none'; base-uri 'none';")
+	c.Header("Content-Security-Policy", "default-src 'none'; script-src 'self' 'unsafe-eval'; style-src 'self'; img-src 'self' data: blob:; connect-src 'self'; frame-ancestors 'none'; form-action 'none'; base-uri 'none';")
 
 	http.ServeFile(c.Writer, c.Request, "./web/dist/index.html")
 }
@@ -126,7 +126,7 @@ func main() {
 	internalAssets := router.Group("/")
 	internalAssets.Use(InternalAssetsHeaders())
 	internalAssets.GET("/", Index)
-	internalAssets.Static("/assets", "./web/dist/")
+	internalAssets.Static("/assets", "./web/dist/assets/")
 	router.HEAD("/openapi.json", OpenAPISpec)
 	router.GET("/openapi.json", OpenAPISpec)
 	router.GET("/alpaca", Alpaca)
