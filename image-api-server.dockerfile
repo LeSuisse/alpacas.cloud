@@ -1,4 +1,4 @@
-FROM golang:1.15.8-alpine3.12 AS builder-go
+FROM golang:1.16.0-alpine3.12 AS builder-go
 
 RUN apk add --no-cache vips-dev gcc libc-dev pkgconfig
 
