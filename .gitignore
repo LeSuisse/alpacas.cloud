@@ -1,3 +1,3 @@
 /.idea
 node_modules
-web/dist/
+cmd/alpacascloud/web/dist/
