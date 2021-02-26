@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"embed"
 	"errors"
 	"github.com/LeSuisse/alpacas.cloud/pkg/images"
 	"github.com/LeSuisse/alpacas.cloud/pkg/prometheus"
@@ -16,16 +17,28 @@ import (
 
 var im images.Images
 
+//go:embed web/dist/*
+var webAppContent embed.FS
+
 func Index(c *gin.Context) {
-	c.Header("Content-Type", "text/html; charset=utf-8")
 	c.Header("Content-Security-Policy", "default-src 'none'; script-src 'self' 'unsafe-eval'; style-src 'self'; img-src 'self' data: blob:; connect-src 'self'; frame-ancestors 'none'; form-action 'none'; base-uri 'none';")
 
-	http.ServeFile(c.Writer, c.Request, "./web/dist/index.html")
+	index, err := webAppContent.ReadFile("web/dist/index.html")
+	if err != nil {
+		c.String(http.StatusInternalServerError, "Cannot load homepage")
+	}
+
+	c.Data(http.StatusOK, "text/html; charset=utf-8", index)
 }
 
 func OpenAPISpec(c *gin.Context) {
 	c.Header("Content-Type", "application/json;charset=utf-8")
-	http.ServeFile(c.Writer, c.Request, "./web/dist/openapi.json")
+	c.FileFromFS("web/dist/openapi.json", http.FS(webAppContent))
+}
+
+func WebAppAssets(c *gin.Context) {
+	filename := c.Param("filename")
+	c.FileFromFS("web/dist/assets/" + filename, http.FS(webAppContent))
 }
 
 type GetAlpacaParameters struct {
@@ -126,7 +139,7 @@ func main() {
 	internalAssets := router.Group("/")
 	internalAssets.Use(InternalAssetsHeaders())
 	internalAssets.GET("/", Index)
-	internalAssets.Static("/assets", "./web/dist/assets/")
+	internalAssets.GET("/assets/*filename", WebAppAssets)
 	router.HEAD("/openapi.json", OpenAPISpec)
 	router.GET("/openapi.json", OpenAPISpec)
 	router.GET("/alpaca", Alpaca)

@@ -1,9 +1,16 @@
+FROM node:15.10.0-alpine3.12 AS builder-web
+
+COPY cmd/alpacascloud/web/ /web/
+WORKDIR /web/
+RUN npm install && npm run build
+
 FROM golang:1.16.0-alpine3.12 AS builder-go
 
 RUN apk add --no-cache vips-dev gcc libc-dev pkgconfig
 
 WORKDIR /go/src/app
 COPY . .
+COPY --from=builder-web /web/dist/ ./cmd/alpacascloud/web/dist/
 
 RUN go build -v \
     -trimpath \
@@ -13,18 +20,11 @@ RUN go build -v \
     -ldflags "-s -w -extldflags -Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now" \
     -o image-api-server cmd/alpacascloud/main.go
 
-FROM node:15.10.0-alpine3.12 AS builder-web
-
-COPY web/ /web/
-WORKDIR /web/
-RUN npm install && npm run build
-
 FROM alpine:3.13.2
 
 RUN apk add --no-cache vips
 
 COPY --from=builder-go /go/src/app/image-api-server /
-COPY --from=builder-web /web/dist/ /web/dist/
 
 USER nobody
 EXPOSE 8080
