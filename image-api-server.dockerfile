@@ -4,7 +4,7 @@ COPY cmd/alpacascloud/web/ /web/
 WORKDIR /web/
 RUN npm install && npm run build
 
-FROM golang:1.16.0-alpine3.12 AS builder-go
+FROM golang:1.16.1-alpine3.12 AS builder-go
 
 RUN apk add --no-cache vips-dev gcc libc-dev pkgconfig
 
