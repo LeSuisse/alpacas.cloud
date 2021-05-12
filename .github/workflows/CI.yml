@@ -39,7 +39,7 @@ jobs:
           docker build -t test-build-image-api-server -f image-api-server.dockerfile .
           docker run test-build-image-api-server || test $? -eq 1
       - name: Anchore scan
-        uses: anchore/scan-action@v2
+        uses: anchore/scan-action@v2.0.4
         with:
           image: "test-build-image-api-server"
           fail-build: true
@@ -61,7 +61,7 @@ jobs:
           docker build -t test-build-signal-server -f signal-server.dockerfile .
           docker run test-build-signal-server || test $? -eq 1
       - name: Anchore scan
-        uses: anchore/scan-action@v2
+        uses: anchore/scan-action@v2.0.4
         with:
           image: "test-build-signal-server"
           fail-build: true
