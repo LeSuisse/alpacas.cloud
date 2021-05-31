@@ -26,6 +26,8 @@ func getConfig() (*config.Config, error) {
 		Tel:                telNumber,
 		StorageDir:         storageDirectory,
 		UnencryptedStorage: true,
+		Name:               "Alpacas.cloud",
+		AlwaysTrustPeerID:  true,
 	}, nil
 }
 
