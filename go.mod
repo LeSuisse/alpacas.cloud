@@ -6,5 +6,5 @@ require (
 	github.com/gin-gonic/gin v1.7.2
 	github.com/h2non/bimg v1.1.5
 	github.com/prometheus/client_golang v1.10.0
-	github.com/signal-golang/textsecure v1.2.14
+	github.com/signal-golang/textsecure v1.3.1
 )
