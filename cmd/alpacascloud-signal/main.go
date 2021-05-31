@@ -29,7 +29,8 @@ func getConfig() (*config.Config, error) {
 		Name:               "Alpacas.cloud",
 		AlwaysTrustPeerID:  true,
 		AccountCapabilities: config.AccountCapabilities{
-			Gv2: true,
+			Gv2:          true,
+			Gv1Migration: true,
 		},
 	}, nil
 }
