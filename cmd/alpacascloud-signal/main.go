@@ -28,6 +28,9 @@ func getConfig() (*config.Config, error) {
 		UnencryptedStorage: true,
 		Name:               "Alpacas.cloud",
 		AlwaysTrustPeerID:  true,
+		AccountCapabilities: config.AccountCapabilities{
+			Gv2: true,
+		},
 	}, nil
 }
 
