@@ -1,6 +1,8 @@
 package main
 
 import (
+	"github.com/signal-golang/textsecure/config"
+	"github.com/signal-golang/textsecure/contacts"
 	"log"
 	"net/http"
 	"os"
@@ -10,7 +12,7 @@ import (
 	"github.com/signal-golang/textsecure"
 )
 
-func getConfig() (*textsecure.Config, error) {
+func getConfig() (*config.Config, error) {
 	telNumber := os.Getenv("TEL_NUMBER")
 	if telNumber == "" {
 		log.Fatal("TEL_NUMBER environment variable must be set")
@@ -20,15 +22,15 @@ func getConfig() (*textsecure.Config, error) {
 		log.Fatal("STORAGE_DIRECTORY environment variable must be set")
 	}
 
-	return &textsecure.Config{
+	return &config.Config{
 		Tel:                telNumber,
 		StorageDir:         storageDirectory,
 		UnencryptedStorage: true,
 	}, nil
 }
 
-func getLocalContacts() ([]textsecure.Contact, error) {
-	return []textsecure.Contact{}, nil
+func getLocalContacts() ([]contacts.Contact, error) {
+	return []contacts.Contact{}, nil
 }
 
 func main() {
