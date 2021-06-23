@@ -13,7 +13,7 @@ RUN go build -v \
     -ldflags "-s -w -extldflags -Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now" \
     -o signal-server cmd/alpacascloud-signal/main.go
 
-FROM debian:buster-20210511-slim
+FROM debian:buster-20210621-slim
 
 ENV SHA256_LIB 4693cdfc8f49f4c7b23495a7330dbe2f024efebc95e7571f4331ac3e85765698
 COPY --from=builder-go /go/src/app/signal-server /
