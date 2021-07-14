@@ -15,10 +15,10 @@ RUN go build -v \
 
 FROM debian:buster-20210621-slim
 
-ENV SHA256_LIB 4693cdfc8f49f4c7b23495a7330dbe2f024efebc95e7571f4331ac3e85765698
+ENV SHA256_LIB 887e7d9129e2343c202a8e666eda73f10567525a11da4e95308760bee14c2e65
 COPY --from=builder-go /go/src/app/signal-server /
-ADD https://github.com/nanu-c/zkgroup/releases/download/v0.8.1/libzkgroup-linux_x86_64-v0.8.1.so /usr/lib/libzkgroup_linux_amd64.so
-RUN echo "$SHA256_LIB /usr/lib/libzkgroup_linux_amd64.so" | sha256sum -c - && chmod 0444 /usr/lib/libzkgroup_linux_amd64.so
+ADD https://github.com/nanu-c/zkgroup/releases/download/v0.8.6/libzkgroup_linux_x86_64-v0.8.6.so /usr/lib/libzkgroup_linux_x86_64.so
+RUN echo "$SHA256_LIB /usr/lib/libzkgroup_linux_x86_64.so" | sha256sum -c - && chmod 0444 /usr/lib/libzkgroup_linux_x86_64.so
 
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get -y install ca-certificates && rm -rf /var/lib/{apt,dpkg,cache,log}/
