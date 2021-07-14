@@ -110,8 +110,8 @@ github.com/modern-go/reflect2 v1.0.1 h1:9f412s+6RmYXLWZSEzVVgPGK7C2PphHj5RJrvfx9
 github.com/modern-go/reflect2 v1.0.1/go.mod h1:bx2lNnkwVCuqBIxFjflWJWanXIb3RllmbCylyMrvgv0=
 github.com/mwitkow/go-conntrack v0.0.0-20161129095857-cc309e4a2223/go.mod h1:qRWi+5nqEBWmkhHvq77mSJWrCKwh8bxhgT7d/eI7P4U=
 github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f/go.mod h1:qRWi+5nqEBWmkhHvq77mSJWrCKwh8bxhgT7d/eI7P4U=
-github.com/nanu-c/zkgroup v0.7.17 h1:phyQDldLT9Fett9VQkTGOU7Lb+OJk3EPQNWS0X89Y7Y=
-github.com/nanu-c/zkgroup v0.7.17/go.mod h1:6c1LFh8Neuzl2qF51yPsH4sdvXFeEdfucfITI4Jbu7o=
+github.com/nanu-c/zkgroup v0.8.7 h1:kwrd2UDYhLTVyWQQE1DDbkJDR2oWtwG4r9kKXURnc4I=
+github.com/nanu-c/zkgroup v0.8.7/go.mod h1:6c1LFh8Neuzl2qF51yPsH4sdvXFeEdfucfITI4Jbu7o=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e h1:fD57ERR4JtEqsWbfPhv4DMiApHyliiK5xCTNVSPiaAs=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
 github.com/onsi/ginkgo v1.6.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
@@ -154,8 +154,8 @@ github.com/signal-golang/ed25519 v0.0.0-20200301051623-f19b832d0d2e h1:XLsRkdVt2
 github.com/signal-golang/ed25519 v0.0.0-20200301051623-f19b832d0d2e/go.mod h1:2Ad7iWk5/yN+AiUcyx6EteImlJBcxBM0Q2R/bmXoCA0=
 github.com/signal-golang/mimemagic v0.0.0-20200821045537-3f613cf2cd3f h1:S17lCk5rcobvgcaLf7XSAoLuNkRPgFyhvgRA9JwDzHc=
 github.com/signal-golang/mimemagic v0.0.0-20200821045537-3f613cf2cd3f/go.mod h1:tU6SWwv50oGkZNPlvTFvmqZvEBp0vWWCC+LCEVlTE5A=
-github.com/signal-golang/textsecure v1.3.1 h1:EJSa0mQusU5SJulCq+TAek2b0elccTrg+vdNP0Ya6vA=
-github.com/signal-golang/textsecure v1.3.1/go.mod h1:SC5nGJB2D+EPPQftErXu3rGyS6AX8SgY14+bORKvsOw=
+github.com/signal-golang/textsecure v1.3.7 h1:jHvTx/aAzKk036+lTeU0wTmbjM2FqZUKCRsoigkHYcM=
+github.com/signal-golang/textsecure v1.3.7/go.mod h1:0pPhfw4Rc5Me6CpHyMfjcjV7Fk5fN7g/ApaaVEYfarI=
 github.com/sirupsen/logrus v1.2.0/go.mod h1:LxeOpSwHxABJmUn/MG1IvRgCAasNZTLOkJPxbbu5VWo=
 github.com/sirupsen/logrus v1.4.2/go.mod h1:tLMulIdttU9McNUspp0xgXVQah82FyeX6MwdIuYE2rE=
 github.com/sirupsen/logrus v1.6.0 h1:UBcNElsrwanuuMsnGSlYmtmgbb23qDR5dG+6X6Oo89I=
