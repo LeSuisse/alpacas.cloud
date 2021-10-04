@@ -154,8 +154,8 @@ github.com/signal-golang/ed25519 v0.0.0-20200301051623-f19b832d0d2e h1:XLsRkdVt2
 github.com/signal-golang/ed25519 v0.0.0-20200301051623-f19b832d0d2e/go.mod h1:2Ad7iWk5/yN+AiUcyx6EteImlJBcxBM0Q2R/bmXoCA0=
 github.com/signal-golang/mimemagic v0.0.0-20200821045537-3f613cf2cd3f h1:S17lCk5rcobvgcaLf7XSAoLuNkRPgFyhvgRA9JwDzHc=
 github.com/signal-golang/mimemagic v0.0.0-20200821045537-3f613cf2cd3f/go.mod h1:tU6SWwv50oGkZNPlvTFvmqZvEBp0vWWCC+LCEVlTE5A=
-github.com/signal-golang/textsecure v1.3.12 h1:kIFxPcvsQfpkl8eEfrupTGmPN4r/6ztCbxIyrAgfDME=
-github.com/signal-golang/textsecure v1.3.12/go.mod h1:HCA0jIpA4TLKxVAS6StR3Av1DiKETHXxkoX+JiOiUdY=
+github.com/signal-golang/textsecure v1.3.13 h1:PgqXTz47PjPn6xJ5ScUtkdTCCV2PwjfVe3q7u1hyAak=
+github.com/signal-golang/textsecure v1.3.13/go.mod h1:HCA0jIpA4TLKxVAS6StR3Av1DiKETHXxkoX+JiOiUdY=
 github.com/sirupsen/logrus v1.2.0/go.mod h1:LxeOpSwHxABJmUn/MG1IvRgCAasNZTLOkJPxbbu5VWo=
 github.com/sirupsen/logrus v1.4.2/go.mod h1:tLMulIdttU9McNUspp0xgXVQah82FyeX6MwdIuYE2rE=
 github.com/sirupsen/logrus v1.6.0 h1:UBcNElsrwanuuMsnGSlYmtmgbb23qDR5dG+6X6Oo89I=
