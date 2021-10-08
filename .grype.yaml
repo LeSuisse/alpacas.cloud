@@ -1,0 +1,12 @@
+ignore:
+  # Removing won't fix vulns
+  - vulnerability: CVE-2019-25013
+  - vulnerability: CVE-2020-10029
+  - vulnerability: CVE-2020-1751
+  - vulnerability: CVE-2020-1752
+  - vulnerability: CVE-2020-27618
+  - vulnerability: CVE-2021-3326
+  - vulnerability: CVE-2021-33574
+  - vulnerability: CVE-2021-35942
+  - vulnerability: CVE-2018-12886
+  - vulnerability: CVE-2019-15847
