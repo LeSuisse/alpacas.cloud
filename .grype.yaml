@@ -10,3 +10,4 @@ ignore:
   - vulnerability: CVE-2021-35942
   - vulnerability: CVE-2018-12886
   - vulnerability: CVE-2019-15847
+  - vulnerability: CVE-2015-5237
