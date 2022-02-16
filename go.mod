@@ -7,4 +7,5 @@ require (
 	github.com/h2non/bimg v1.1.6
 	github.com/prometheus/client_golang v1.12.1
 	github.com/signal-golang/textsecure v1.9.0
+	google.golang.org/protobuf v1.27.1 // indirect
 )
