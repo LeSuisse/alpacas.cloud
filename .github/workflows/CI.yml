@@ -18,7 +18,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 15.x
-      - uses: actions/checkout@v2.4.0
+      - uses: actions/checkout@v3
       - name: Prepare environment
         run: sudo apt -y update && sudo apt-get -y install libvips-dev
       - name: Build web app
@@ -33,7 +33,7 @@ jobs:
     name: Build & scan Docker image Image API server
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2.4.0
+      - uses: actions/checkout@v3
       - name: Build Docker image
         run: |
           docker build -t test-build-image-api-server -f image-api-server.dockerfile .
@@ -54,7 +54,7 @@ jobs:
     name: Build & scan Docker image Signal server
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2.4.0
+      - uses: actions/checkout@v3
       - name: Build Docker image Signal server
         run: |
           docker build -t test-build-signal-server -f signal-server.dockerfile .
