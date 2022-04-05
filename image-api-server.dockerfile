@@ -20,7 +20,7 @@ RUN go build -v \
     -ldflags "-s -w -extldflags -Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now" \
     -o image-api-server cmd/alpacascloud/main.go
 
-FROM alpine:3.15.3
+FROM alpine:3.15.4
 
 RUN apk add --no-cache vips
 
