@@ -17,7 +17,7 @@ jobs:
         id: go
       - uses: actions/setup-node@v3
         with:
-          node-version: 15.x
+          node-version: 18.x
       - uses: actions/checkout@v3
       - name: Prepare environment
         run: sudo apt -y update && sudo apt-get -y install libvips-dev
