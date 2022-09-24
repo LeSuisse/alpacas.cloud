@@ -3,7 +3,7 @@
   "info": {
     "version": "1.0.0",
     "title": "Alpacas.cloud — Alpacas are awesome!",
-    "description": "Share your love of alpacas! A [Signal](https://signal.org) bot is also available, just ask for an alpaca at this number: [+33771848935](tel:+33771848935).",
+    "description": "Share your love of alpacas!",
     "license": {
       "name": "MIT"
     }

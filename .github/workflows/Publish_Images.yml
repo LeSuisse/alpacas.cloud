@@ -18,6 +18,3 @@ jobs:
       - run: |
           docker build -t ghcr.io/lesuisse/alpacas.cloud/server -f image-api-server.dockerfile .
           docker push ghcr.io/lesuisse/alpacas.cloud/server
-      - run: |
-          docker build -t ghcr.io/lesuisse/alpacas.cloud/signal-server -f signal-server.dockerfile .
-          docker push ghcr.io/lesuisse/alpacas.cloud/signal-server
