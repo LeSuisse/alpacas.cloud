@@ -20,7 +20,7 @@ RUN go build -v \
     -ldflags "-s -w -extldflags -Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now" \
     -o image-api-server cmd/alpacascloud/main.go
 
-FROM cgr.dev/chainguard/alpine-base:latest@sha256:9967caa74bbb6b11402a963735f1ae202af362ecf280c169a26865df862cf2eb
+FROM cgr.dev/chainguard/alpine-base:latest
 
 RUN apk add --no-cache --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community vips
 
