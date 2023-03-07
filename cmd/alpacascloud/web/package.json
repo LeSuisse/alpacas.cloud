@@ -9,7 +9,7 @@
     "serve": "vite"
   },
   "dependencies": {
-    "swagger-ui": "^4.17.0"
+    "swagger-ui": "^4.17.1"
   },
   "devDependencies": {
     "rollup-plugin-copy": "^3.4.0",
