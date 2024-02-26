@@ -13,6 +13,6 @@
     "vite": "^5.0.12"
   },
   "dependencies": {
-    "swagger-ui": "^5.11.7"
+    "swagger-ui": "^5.11.8"
   }
 }
