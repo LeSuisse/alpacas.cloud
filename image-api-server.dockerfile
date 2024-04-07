@@ -1,10 +1,10 @@
-FROM node:21.7.1-alpine3.18 AS builder-web
+FROM node:21.7.1-alpine3.19 AS builder-web
 
 COPY cmd/alpacascloud/web/ /web/
 WORKDIR /web/
 RUN npm install && npm run build
 
-FROM golang:1.22.2-alpine3.18 AS builder-go
+FROM golang:1.22.2-alpine3.19 AS builder-go
 
 RUN apk add --no-cache vips-dev gcc libc-dev pkgconfig
 
@@ -20,9 +20,9 @@ RUN go build -v \
     -ldflags "-s -w -extldflags -Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now" \
     -o image-api-server cmd/alpacascloud/main.go
 
-FROM cgr.dev/chainguard/alpine-base:latest
+FROM alpine:3.19
 
-RUN apk add --no-cache --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community vips
+RUN apk add --no-cache vips
 
 COPY --from=builder-go /go/src/app/image-api-server /
 
