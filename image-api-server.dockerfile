@@ -1,10 +1,10 @@
-FROM node:23.8.0-alpine3.20 AS builder-web
+FROM node:23.8.0-alpine3.21 AS builder-web
 
 COPY cmd/alpacascloud/web/ /web/
 WORKDIR /web/
 RUN npm install && npm run build
 
-FROM golang:1.24-alpine3.20 AS builder-go
+FROM golang:1.24-alpine3.21 AS builder-go
 
 RUN apk add --no-cache vips-dev gcc libc-dev pkgconfig
 
@@ -20,7 +20,7 @@ RUN go build -v \
     -ldflags "-s -w -extldflags -Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now" \
     -o image-api-server cmd/alpacascloud/main.go
 
-FROM alpine:3.20
+FROM alpine:3.21
 
 RUN apk add --no-cache vips
 
