@@ -6,19 +6,23 @@ on:
       - master
   pull_request:
 
+permissions: {}
+
 jobs:
   go_pipeline:
     name: Go build and static analysis
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@f111f3307d8850f501ac008e886eec1fd1932a34 # tag=v5.3.0
         with:
-          go-version: 1.24
+          go-version: "^1.24"
         id: go
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # tag=v4.2.0
         with:
-          node-version: 20.x
-      - uses: actions/checkout@v4
+          node-version: 22.x
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # tag=v4.2.2
+        with:
+          persist-credentials: false
       - name: Prepare environment
         run: sudo apt -y update && sudo apt-get -y install libvips-dev
       - name: Build web app
@@ -33,19 +37,21 @@ jobs:
     name: Build & scan Docker image Image API server
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # tag=v4.2.2
+        with:
+          persist-credentials: false
       - name: Build Docker image
         run: |
           docker build -t test-build-image-api-server -f image-api-server.dockerfile .
           docker run test-build-image-api-server || test $? -eq 1
       - name: Anchore scan
         id: scan
-        uses: anchore/scan-action@v6.1.0
+        uses: anchore/scan-action@7c05671ae9be166aeb155bad2d7df9121823df32 # tag=v6.1.0
         with:
           image: "test-build-image-api-server"
           fail-build: false
           acs-report-enable: true
       - name: Upload Anchore scan SARIF report
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@b56ba49b26e50535fa1e7f7db0f4f7b4bf65d80d # tag=v3.28.10
         with:
           sarif_file: ${{ steps.scan.outputs.sarif }}
