@@ -35,6 +35,8 @@ jobs:
         run: go tool staticcheck -checks 'all,-ST1000' ./...
   docker-image-image-api-server:
     name: Build & scan Docker image Image API server
+    permissions:
+      security-events: write
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # tag=v4.2.2
