@@ -52,7 +52,6 @@ jobs:
         with:
           image: "test-build-image-api-server"
           fail-build: false
-          acs-report-enable: true
       - name: Upload Anchore scan SARIF report
         uses: github/codeql-action/upload-sarif@b56ba49b26e50535fa1e7f7db0f4f7b4bf65d80d # tag=v3.28.10
         with:
