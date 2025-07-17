@@ -1,4 +1,4 @@
-FROM node:24.4.0-alpine3.21 AS builder-web
+FROM node:24.4.1-alpine3.21 AS builder-web
 
 COPY cmd/alpacascloud/web/ /web/
 WORKDIR /web/
