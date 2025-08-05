@@ -48,7 +48,7 @@ jobs:
           docker run test-build-image-api-server || test $? -eq 1
       - name: Anchore scan
         id: scan
-        uses: anchore/scan-action@df395807f4554463d4455b8047cf58e37b6acaae # tag=v6.5.0
+        uses: anchore/scan-action@1638637db639e0ade3258b51db49a9a137574c3e # tag=v6.5.1
         with:
           image: "test-build-image-api-server"
           fail-build: false
