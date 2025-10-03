@@ -9,7 +9,7 @@
     "serve": "vite"
   },
   "devDependencies": {
-    "vite": "^7.1.8"
+    "vite": "^7.1.9"
   },
   "dependencies": {
     "swagger-ui": "^5.29.2"
