@@ -9,6 +9,10 @@ import (
 	"path/filepath"
 )
 
+func init() {
+	vips.LoggingSettings(nil, vips.LogLevelError)
+}
+
 const (
 	maxAttempts = 10
 )
