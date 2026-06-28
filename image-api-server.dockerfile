@@ -1,10 +1,10 @@
-FROM node:25.2.1-alpine3.21 AS builder-web
+FROM node:25.2.1-alpine3.24 AS builder-web
 
 COPY cmd/alpacascloud/web/ /web/
 WORKDIR /web/
 RUN npm install && npm run build
 
-FROM golang:1.25-alpine3.21 AS builder-go
+FROM golang:1.25-alpine3.24 AS builder-go
 
 RUN apk add --no-cache vips-dev gcc libc-dev pkgconfig
 
