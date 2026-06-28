@@ -68,15 +68,17 @@ func (images Images) Get(requestedOpts ImageOpts) (*OutputImage, error) {
 
 func (images Images) getResizedImage(requestedOpts ImageOpts) (*OutputImage, error) {
 	imagePath := images[randomSource.Intn(len(images))]
-	inputBuf, err := os.ReadFile(imagePath)
+	file, err := os.Open(imagePath)
 	if err != nil {
 		return nil, err
 	}
+	defer file.Close()
 
-	image, err := vips.NewImageFromBuffer(inputBuf)
+	image, err := vips.NewImageFromReader(file)
 	if err != nil {
 		return nil, err
 	}
+	defer image.Close()
 	err = image.AutoRotate()
 	if err != nil {
 		return nil, err
@@ -136,15 +138,17 @@ func (images Images) GetPlaceHolder(requestedOpts ImageOpts) (*OutputImage, erro
 
 func (images Images) getPlaceHolderImage(requestedOpts ImageOpts) (*OutputImage, error) {
 	imagePath := images[randomSource.Intn(len(images))]
-	inputBuf, err := os.ReadFile(imagePath)
+	file, err := os.Open(imagePath)
 	if err != nil {
 		return nil, err
 	}
+	defer file.Close()
 
-	image, err := vips.NewImageFromBuffer(inputBuf)
+	image, err := vips.NewImageFromReader(file)
 	if err != nil {
 		return nil, err
 	}
+	defer image.Close()
 	err = image.AutoRotate()
 	if err != nil {
 		return nil, err
