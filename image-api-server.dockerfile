@@ -29,5 +29,6 @@ COPY --from=builder-go /go/src/app/image-api-server /
 USER nobody
 EXPOSE 8080
 ENV IMAGES_PATH /img
+ENV MALLOC_ARENA_MAX 2
 
 CMD ["/image-api-server"]

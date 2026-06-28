@@ -2,7 +2,7 @@ package images
 
 import (
 	"errors"
-	"github.com/h2non/bimg"
+	"github.com/davidbyttow/govips/v2/vips"
 	"math"
 	"os"
 	"path"
@@ -73,28 +73,29 @@ func (images Images) getResizedImage(requestedOpts ImageOpts) (*OutputImage, err
 		return nil, err
 	}
 
-	image := bimg.NewImage(inputBuf)
-	_, err = image.AutoRotate()
+	image, err := vips.NewImageFromBuffer(inputBuf)
+	if err != nil {
+		return nil, err
+	}
+	err = image.AutoRotate()
 	if err != nil {
 		return nil, err
 	}
 
-	imageSize, err := image.Size()
-	if err != nil {
-		return nil, err
-	}
+	imageWidth := image.Width()
+	imageHeight := image.Height()
 
 	maxWidth := requestedOpts.MaxWidth
 	if maxWidth == 0 {
-		maxWidth = imageSize.Width
+		maxWidth = imageWidth
 	}
 	maxHeight := requestedOpts.MaxHeight
 	if maxHeight == 0 {
-		maxHeight = imageSize.Height
+		maxHeight = imageHeight
 	}
 
-	scaleWidth := float64(maxWidth) / float64(imageSize.Width)
-	scaleHeight := float64(maxHeight) / float64(imageSize.Height)
+	scaleWidth := float64(maxWidth) / float64(imageWidth)
+	scaleHeight := float64(maxHeight) / float64(imageHeight)
 
 	if scaleWidth > 1 || scaleHeight > 1 {
 		return nil, &RequestedSizeTooBigError{}
@@ -102,15 +103,19 @@ func (images Images) getResizedImage(requestedOpts ImageOpts) (*OutputImage, err
 	scale := math.Min(scaleWidth, scaleHeight)
 
 	if scale != 1 {
-		_, err = image.Resize(int(float64(imageSize.Width)*scale), int(float64(imageSize.Height)*scale))
+		err = image.Resize(scale, vips.KernelLanczos3)
 		if err != nil {
 			return nil, err
 		}
 	}
 
+	imageData, _, err := image.ExportNative()
+	if err != nil {
+		return nil, err
+	}
 	return &OutputImage{
 		Name: filepath.Base(imagePath),
-		Data: image.Image(),
+		Data: imageData,
 	}, nil
 }
 
@@ -136,31 +141,36 @@ func (images Images) getPlaceHolderImage(requestedOpts ImageOpts) (*OutputImage,
 		return nil, err
 	}
 
-	image := bimg.NewImage(inputBuf)
-	_, err = image.AutoRotate()
+	image, err := vips.NewImageFromBuffer(inputBuf)
+	if err != nil {
+		return nil, err
+	}
+	err = image.AutoRotate()
 	if err != nil {
 		return nil, err
 	}
 
-	imageSize, err := image.Size()
-	if err != nil {
-		return nil, err
-	}
+	imageWidth := image.Width()
+	imageHeight := image.Height()
 
 	width := requestedOpts.MaxWidth
 	if width == 0 {
-		width = imageSize.Width
+		width = imageWidth
 	}
 	height := requestedOpts.MaxHeight
 	if height == 0 {
-		height = imageSize.Height
+		height = imageHeight
 	}
 
-	if width > imageSize.Width || height > imageSize.Height {
+	if width > imageWidth || height > imageHeight {
 		return nil, &RequestedSizeTooBigError{}
 	}
 
-	outputImg, err := image.SmartCrop(width, height)
+	err = image.SmartCrop(width, height, vips.InterestingCentre)
+	if err != nil {
+		return nil, err
+	}
+	outputImg, _, err := image.ExportNative()
 	if err != nil {
 		return nil, err
 	}

@@ -3,8 +3,8 @@ module github.com/LeSuisse/alpacas.cloud
 go 1.25.0
 
 require (
+	github.com/davidbyttow/govips/v2 v2.16.0
 	github.com/gin-gonic/gin v1.12.0
-	github.com/h2non/bimg v1.1.9
 	github.com/prometheus/client_golang v1.23.2
 )
 
@@ -43,6 +43,7 @@ require (
 	golang.org/x/arch v0.22.0 // indirect
 	golang.org/x/crypto v0.48.0 // indirect
 	golang.org/x/exp/typeparams v0.0.0-20231108232855-2478ac86f678 // indirect
+	golang.org/x/image v0.18.0 // indirect
 	golang.org/x/mod v0.32.0 // indirect
 	golang.org/x/net v0.51.0 // indirect
 	golang.org/x/sync v0.19.0 // indirect
