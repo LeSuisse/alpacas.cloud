@@ -3,7 +3,7 @@ module github.com/LeSuisse/alpacas.cloud
 go 1.26.0
 
 require (
-	github.com/davidbyttow/govips/v2 v2.19.0
+	github.com/davidbyttow/govips/v2 v2.20.0
 	github.com/gin-gonic/gin v1.12.0
 	github.com/prometheus/client_golang v1.25.0
 )
